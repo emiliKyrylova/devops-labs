@@ -16,3 +16,14 @@ config:
 
 ingress:
   enabled: false
+
+  rollout:
+    enabled: true
+    strategy:
+      canary:
+        steps:
+          - setWeight: 20
+          - pause: { }          # Ручна пауза (вимагає команди promote)
+          - setWeight: 60
+          - pause: { duration: 30s }
+          - setWeight: 80

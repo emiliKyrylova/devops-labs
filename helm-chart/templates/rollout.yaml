@@ -1,10 +1,15 @@
-apiVersion: apps/v1
-kind: Deployment
+{{- if .Values.rollout.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: {{ .Release.Name }}-rollout
   namespace: cats-namespace
+  labels:
+    app: cats-web
+    release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: cats-web
@@ -32,3 +37,7 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}-config
               key: APP_ENVIRONMENT
+  strategy:
+    canary:
+      {{- toYaml .Values.rollout.strategy.canary | nindent 6 }}
+{{- end }}
