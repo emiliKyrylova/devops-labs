@@ -1,0 +1,11 @@
+.idea/
+
+__pycache__/
+*.pyc
+
+.venv/
+venv/
+
+postgres_data/
+
+kubectl-argo-rollouts.exe
