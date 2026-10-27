@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: "cats-registry:1.2.0"
+        image: "cats-registry:1.0.0"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
