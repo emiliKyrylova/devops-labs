@@ -1,41 +1,46 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ .Release.Name }}-rollout
+  name: cats-registry-rollout
   namespace: cats-namespace
   labels:
     app: cats-web
-    release: {{ .Release.Name }}
+    release: cats-release
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 4
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: cats-web
-      release: {{ .Release.Name }}
+      release: cats-release
   template:
     metadata:
       labels:
         app: cats-web
-        release: {{ .Release.Name }}
+        release: cats-release
     spec:
       containers:
       - name: web
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "cats-registry:1.0.0"
+        imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: {{ .Values.service.port }}
+        - containerPort: 8000
         env:
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-secret
+              name: cats-release-secret
               key: DATABASE_URL
         - name: APP_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
-              name: {{ .Release.Name }}-config
+              name: cats-release-config
               key: APP_ENVIRONMENT
   strategy:
     canary:
-      {{- toYaml .Values.rollout.strategy.canary | nindent 6 }}
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - setWeight: 60
+        - pause: {duration: 30s}
+        - setWeight: 80
