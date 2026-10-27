@@ -10,10 +10,10 @@ spec:
   source:
     repoURL: 'https://github.com/emiliKyrylova/devops-labs.git'
     targetRevision: HEAD
-    path: helm-chart
+    path: argocd-apps  # Оновлюємо шлях на папку з додатками!
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: cats-namespace
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
